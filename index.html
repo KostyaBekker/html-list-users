@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>List users</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/creatUser.css">
+</head>
+<body>
+  <section class="list-users">
+    <div class="list-users__button-block">
+      <button id="open-button">
+        Create User
+      </button>
+    </div>
+    <div class="list-users__table-block">
+      <table class="list-users__table">
+        <thead>
+          <tr>
+            <th>USERNAME</th>
+            <th>FIRST NAME</th>
+            <th>LAST NAME</th>
+            <th>EMAIL</th>
+            <th>TYPE</th>
+          </tr>
+        </thead>
+        <tbody id="list-users"></tbody>
+      </table>
+    </div>
+    <div class="list-users__creat-user d-none" id="modal-create">
+      <div class="list-users__creat-user__block">
+        <header>
+          <h1>Create new user</h1>
+          <img src="img/exit-modal.svg" id="exit-modal" alt="exit-modal">
+        </header>
+        <div id="render-user-fialds"></div>
+        <div class="list-users__creat-user__button">
+            <button id="close-button">Create</button>
+          </div>
+      </div>
+    </div>
+    <div class="d-none" id="successMessageAnswer">Success message</div>
+    <div class="d-none" id="errorMessageAnswer">Error message</div>
+    <div></div>
+  </section>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+body {
+  background: #EEF0F8;
+}
+.list-users {
+  padding: 26px 26px 26px 26px;
+}
+
+.list-users__button-block {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.list-users__button-block button {
+  background: #2E8FF0;
+  border-radius: 6px;
+  border: 1px solid #2E8FF0;
+  padding: 15px 23px;
+  box-shadow: 0px 5px 8px #2E8FF029;
+  color: white;
+  cursor: pointer;
+}
+
+.list-users__table-block {
+  height: calc(100vh - 132px);
+  background: white;
+  border-radius: 6px;
+}
+  
+.list-users__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.list-users__table th {
+  padding: 23px 0 17px 25px;
+  font-size: 13px;
+  color: #A4A4B5;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: left;
+}
+.list-users__table tbody {
+  font-size: 13px;
+  color: #3F4254;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.list-users__table tbody tr {
+  padding-bottom: 15px;
+  background: #F4F5F8;
+  border-bottom: 2px solid white;
+}
+.list-users__table td {
+  padding: 20px 25px;
+}
