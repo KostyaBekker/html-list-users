@@ -1,4 +1,5 @@
-const users = [
+let activeUserId = '';
+let users = [
   {
     username: 'Kostya1234',
     firstName: 'Kostya',
@@ -6,7 +7,8 @@ const users = [
     email: 'BK@ukr.net',
     type: 'Driver',
     password: 'value12345',
-    reapeatPassword: 'value12345'
+    reapeatPassword: 'value12345',
+    id: '111'
   },
   {
     username: 'Ivan1234',
@@ -15,16 +17,17 @@ const users = [
     email: 'Ivanov@i.ua',
     type: 'Admin',
     password: 'value12345',
-    reapeatPassword: 'value12345'
+    reapeatPassword: 'value12345',
+    id: '123'
   },
 ];
 
-function inilisationListUsers () {
+function renderListUsers () {
   let listAllUsers = '';
   users.forEach(item => {
     listAllUsers +=
       `
-        <tr>
+        <tr class="user" id=${item.id}>
           <td>${item.username}</td>
           <td>${item.firstName}</td>
           <td>${item.lastName}</td>
@@ -36,16 +39,21 @@ function inilisationListUsers () {
   document.getElementById('list-users').innerHTML = listAllUsers;
 }
 
-inilisationListUsers();
+renderListUsers();
+document.getElementById('list-users').addEventListener("click", openModal, true);
 
 const exit = document.getElementById('exit-modal');
 const openButton = document.getElementById('open-button');
 const createUserBlock = document.getElementById('modal-create');
+const createButtonBlock = document.getElementById('list-users__creat-user__button');
+const editButtonBlock = document.getElementById('list-users__edit-user__button');
 
 openButton.addEventListener("click", openModal, true);
 
 function closeModal () {
   createUserBlock.classList.add("d-none");
+  document.getElementById('delete-user').removeEventListener("click", deleteUserFunc);
+  document.getElementById('save-user').removeEventListener("click", saveUserFunc);
 }
 
 const formDataUsers = [
@@ -72,7 +80,7 @@ const formDataUsers = [
   },
   {
     key: 'reapeatPassword', 
-    error: 'errorPassword',
+    error: 'errorReapeatPassword',
     required: true,
     lable: 'Reapeat password',
     type: 'password',
@@ -80,11 +88,30 @@ const formDataUsers = [
   },
 ];
 
-function openModal () {
+
+
+function openModal (event) {
+  activeUserId = event.path[1].id;
+  if (activeUserId) {
+    createButtonBlock.classList.add("d-none");
+    editButtonBlock.classList.remove("d-none");
+  } else {
+    editButtonBlock.classList.add("d-none");
+    createButtonBlock.classList.remove("d-none");
+  }
+  document.getElementById('delete-user').addEventListener("click", deleteUserFunc);
+  document.getElementById('save-user').addEventListener("click", saveUserFunc);
+
   exit.addEventListener("click", closeModal, true);
   document.getElementById('close-button').addEventListener("click", addUser, true);
   createUserBlock.classList.remove("d-none");
   let renderUsersFialds = '';
+  let chekedUser = {};
+  users.forEach(item => {
+    if (item.id === activeUserId) {
+      chekedUser = item;
+    };
+  });
   formDataUsers.forEach(item => {
      if (item.type === 'select') {
       renderUsersFialds +=
@@ -92,9 +119,21 @@ function openModal () {
         <div class="list-users__creat-user__input-item">
           <lable>${item.lable}</lable>
           <div class="list-users__creat-user__select">
-            <select id=${item.key}>
-              <option value="Admin">Admin</option>
-              <option value="Driver">Driver</option>
+            <select
+              id=${item.key}
+            >
+              <option 
+                ${chekedUser[item.key] ===  'Driver' ? `selected` : ""}
+                value="Driver"
+              >
+                Driver
+              </option>
+              <option 
+                ${chekedUser[item.key] ===  'Admin' ? `selected` : ""}
+                value="Admin"
+              >
+                Admin
+              </option>
             </select>
             <img src="img/arrow_drop_down.svg" alt="arrow_drop_down">
           </div>
@@ -105,7 +144,12 @@ function openModal () {
       `
         <div class="list-users__creat-user__input-item">
           <lable>${item.lable}</lable>
-          <input type=${item.type} id=${item.key} placeholder=${item.placeholder ? item.placeholder : ''}>
+          <input
+            ${item.placeholder ? `placeholder=${item.placeholder}` : ""}
+            ${chekedUser[item.key] ? `value=${chekedUser[item.key]}` : ""}
+            type=${item.type}
+            id=${item.key}
+          >
           <span class="d-none" id=${item.error ? item.error : ''}>Error massage</span>
         </div>
       `
@@ -114,11 +158,23 @@ function openModal () {
   document.getElementById('render-user-fialds').innerHTML = renderUsersFialds;
 }
 
+function deleteUserFunc () {
+  let updateUsers = [];
+  users.forEach(item => {
+    if (activeUserId !== item.id) {
+      updateUsers.push(item);
+    }
+  })
+  users = updateUsers;
+  renderListUsers();
+  closeModal();
+}
+
 function addNewUserToHtml (newUser) {
   let listUsers = document.getElementById('list-users').innerHTML;
   listUsers +=
       `
-        <tr>
+        <tr class="user" id=${newUser.id}>
           <td>${newUser.username}</td>
           <td>${newUser.firstName}</td>
           <td>${newUser.lastName}</td>
@@ -128,10 +184,10 @@ function addNewUserToHtml (newUser) {
       `
   document.getElementById('list-users').innerHTML = listUsers;
 }
-
-function addUser () {
+function getAllFields (callBack) {
   let isValid = true;
   const newUser = {};
+  
   formDataUsers.forEach(item => {
     const elem = document.getElementById(item.key)
     const elemError = document.getElementById(item.error)
@@ -162,6 +218,14 @@ function addUser () {
         isValid = false;
       }
     }
+    if (item.key === 'reapeatPassword') {
+      if (value === newUser.password) {
+        elem.classList.remove("error-border");
+      } else {
+        elem.classList.add("error-border");
+        isValid = false;
+      }
+    }
     newUser[item.key] = value;
   });
 
@@ -170,15 +234,12 @@ function addUser () {
     setTimeout(function(){
       document.getElementById('successMessageAnswer').classList.add("d-none");
     },1000)
-    users.push(newUser);
 
     formDataUsers.forEach((item, index) => {
       document.getElementById(item.key).value = item.defaultValue || '';
     });
-
-    addNewUserToHtml(newUser);
     createUserBlock.classList.add("d-none");
-
+    callBack(newUser)
   } else {
     document.getElementById('errorMessageAnswer').classList.remove("d-none");
     setTimeout(function(){
@@ -186,3 +247,32 @@ function addUser () {
     },1000)
   }
 }
+
+function addUser () {
+  getAllFields(newUser => {
+    newUser.id = String(Math.random() * (1000 - 2));
+    users.push(newUser);
+    addNewUserToHtml(newUser);
+  })
+}
+
+function saveUserFunc () {
+  getAllFields(newUser => {
+    console.log(newUser);
+    
+    let updateUsers = [];
+    users.forEach(item => {
+      console.log(activeUserId, item.id)
+      if (activeUserId === item.id) {
+        newUser.id = activeUserId;
+        updateUsers.push(newUser);
+      } else {
+        updateUsers.push(item);
+      }
+    })
+    users = updateUsers;
+    renderListUsers();
+  })
+}
+
+

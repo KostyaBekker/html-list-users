@@ -136,3 +136,33 @@ select {
 #successMessageAnswer {
   background: #66BB6A;
 }
+
+.user {
+  cursor: pointer;
+}
+
+.list-users__edit-user__button {
+  display: flex;
+  justify-content: space-between;
+  margin: 26px 23px 25px 27px;
+}
+
+#save-user {
+  background: #2E8FF0;
+  border-radius: 6px;
+  border: 1px solid #2E8FF0;
+  padding: 15px 44px;
+  box-shadow: 0px 5px 8px #2E8FF029;
+  color: white;
+  cursor: pointer;
+}
+
+#delete-user {
+  background:  #EF7DA0;
+  border-radius: 6px;
+  border: 1px solid  #EF7DA0;
+  padding: 15px 40px;
+  box-shadow: 0px 5px 8px #2E8FF029;
+  color: white;
+  cursor: pointer;
+}
